@@ -1,0 +1,18 @@
+<div>
+  <app-sessions-toolbar></app-sessions-toolbar>
+  <div class="d-flex justify-content-center">
+    <div class="camera-container px-2 py-2">
+      <webcam
+        [trigger]="triggerObservable"
+        (imageCapture)="handleImage($event)"
+      ></webcam>
+    </div>
+    <div>
+      <!-- <mat-select>
+        @for (level of noiseLevels; track level) {
+        <mat-option [value]="level">level</mat-option>
+        }
+      </mat-select> -->
+    </div>
+  </div>
+</div>

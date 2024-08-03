@@ -1,0 +1,11 @@
+@import "../../../styles.scss";
+
+.landing-page {
+  background-image: url("../../../assets/lofi-8390942_1280.png");
+  background-size: cover;
+}
+
+.landing-dialog {
+  background-color: $background-secondary-color;
+  max-width: 285px;
+}
