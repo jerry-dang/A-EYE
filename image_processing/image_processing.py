@@ -48,15 +48,17 @@ class ImageProcessor:
         # region = self.gaze_region(height, width, left_pupil_pos, right_pupil_pos)
 
         if self.gaze_tracker.is_up():
-            gaze_direction = 1
+            gaze_direction = "up"
         elif self.gaze_tracker.is_down():
-            gaze_direction = 2
+            gaze_direction = "down"
         elif self.gaze_tracker.is_right():
-            gaze_direction = 3
+            gaze_direction = "right"
         elif self.gaze_tracker.is_left():
-            gaze_direction = 4
+            gaze_direction = "left"
+        elif self.gaze_tracker.is_center():
+            gaze_direction = "center"
         else:
-            gaze_direction = 5 # deem as off screen
+            gaze_direction = "off" # deem as off screen
 
         return gaze_direction
 
@@ -84,7 +86,7 @@ class ImageProcessor:
         try:
             data["gaze_area"] = self.gaze_processor(nparr)
         except:
-            data["gaze_area"] = 5
+            data["gaze_area"] = "off"
 
         return data
 
@@ -103,7 +105,8 @@ class DataAggregator:
         self.image_processor = ImageProcessor()
         self.emotions = set(["sad", "angry", "surprise", "fear", "happy",
             "disgust", "neutral"])
-        self.gaze_areas = set([1, 2, 3, 4, 5]) # 1 for center, 2 for outer rim, 3 for off screen
+        self.gaze_areas = set(["up", "down", "left", "right", "center", "offs"]) # 1 for center, 2 for outer rim, 3 for off screen
+        self.weights = ...
 
     def grab_images(self):
         # TODO: connect to db and grab all images under self.study_session_id
@@ -164,6 +167,33 @@ class DataAggregator:
 
         face_data = {"dominant_emotions": emotion_count, "gaze_area": gaze_area_count, "timestamp": start_timestamp}
         return face_data
+
+    def determine_fitness(self, bucket):
+        # calculate weighted average
+        emotion_count = bucket["dominant_emotions"]
+        gaze_area_count = bucket["gaze_area"]
+        fitness = 0
+
+        total_emotion_count = sum(emotion_count.values())
+        total_gaze_area_count = sum(gaze_area_count.values())
+        for emotion, count in emotion_count.items():
+            fitness += self.weights.get(emotion, 0) * count / total_emotion_count
+
+        for gaze, count in gaze_area_count.items():
+            fitness += self.weights.get(gaze, 0) * count / total_gaze_area_count
+
+        # penalize if theres "spread out" freq. eg. dont penalize 1 1 1 3 2 but penalize 1 1 2 3 4 5
+        max_emotion_count = max(emotion_count.values())
+        if max_emotion_count < 0.4 * total_emotion_count:
+            fitness -= (total_emotion_count - max_emotion_count) * 0.2
+
+        max_gaze_count = max(gaze_area_count.values())
+        if max_gaze_count < 0.4 * total_gaze_area_count:
+            fitness -= (total_gaze_area_count - max_gaze_count) * 0.2
+
+        return max(1, fitness)
+        
+
     
 
 func = DataAggregator(1)
