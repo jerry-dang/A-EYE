@@ -20,4 +20,7 @@ from apis import views
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('start_session/', views.StartSessionView.as_view(), name='start_session'),
+    path('end_session/', views.EndSessionView.as_view(), name='end_session'),
+    path('save_image/', views.SaveImageView.as_view(), name='save_image'),
+    path('get_image_data/', views.ImageDataView.as_view(), name='get_image_data'),
 ]
