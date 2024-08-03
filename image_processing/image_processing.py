@@ -18,3 +18,14 @@ class FacialExpressionRecognition:
 
 test = FacialExpressionRecognition()
 test.process_image()
+
+
+class DataAggregator:
+    def __init__(self, study_session_id):
+        self.study_session_id = study_session_id
+        self.image_processor
+
+    def grab_images(self):
+        # TODO: connect to db and grab all images under self.study_session_id
+
+    def process
