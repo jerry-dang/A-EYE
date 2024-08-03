@@ -42,11 +42,23 @@ class ImageProcessor:
         # nparr = np.frombuffer(decoded_data, np.uint8) # already turnt into nparr in caller func
         image = cv2.imdecode(image, cv2.IMREAD_COLOR)
         self.gaze_tracker.refresh(image)
-        height, width, _ = image.shape
-        left_pupil_pos = self.gaze_tracker.pupil_left_coords()
-        right_pupil_pos = self.gaze_tracker.pupil_right_coords()
-        region = self.gaze_region(height, width, left_pupil_pos, right_pupil_pos)
-        return region
+        # height, width, _ = image.shape
+        # left_pupil_pos = self.gaze_tracker.pupil_left_coords()
+        # right_pupil_pos = self.gaze_tracker.pupil_right_coords()
+        # region = self.gaze_region(height, width, left_pupil_pos, right_pupil_pos)
+
+        if self.gaze_tracker.is_up():
+            gaze_direction = 1
+        elif self.gaze_tracker.is_down():
+            gaze_direction = 2
+        elif self.gaze_tracker.is_right():
+            gaze_direction = 3
+        elif self.gaze_tracker.is_left():
+            gaze_direction = 4
+        else:
+            gaze_direction = 5 # deem as off screen
+
+        return gaze_direction
 
     def process_image(self, image=None):
         # grab locally # TODO replace
@@ -72,7 +84,7 @@ class ImageProcessor:
         try:
             data["gaze_area"] = self.gaze_processor(nparr)
         except:
-            data["gaze_area"] = []
+            data["gaze_area"] = 5
 
         return data
 
@@ -91,7 +103,7 @@ class DataAggregator:
         self.image_processor = ImageProcessor()
         self.emotions = set(["sad", "angry", "surprise", "fear", "happy",
             "disgust", "neutral"])
-        self.gaze_areas = set([1, 2, 3]) # 1 for center, 2 for outer rim, 3 for off screen
+        self.gaze_areas = set([1, 2, 3, 4, 5]) # 1 for center, 2 for outer rim, 3 for off screen
 
     def grab_images(self):
         # TODO: connect to db and grab all images under self.study_session_id
@@ -146,9 +158,8 @@ class DataAggregator:
             gaze_area = data["gaze_area"]
             if dominant_emotion in emotion_count:
                 emotion_count[dominant_emotion] += 1
-            for pupil_area in gaze_area:
-                if pupil_area in gaze_area:
-                    gaze_area_count[pupil_area] += 1
+            if gaze_area in gaze_area_count:
+                gaze_area_count[gaze_area] += 1
         
 
         face_data = {"dominant_emotions": emotion_count, "gaze_area": gaze_area_count, "timestamp": start_timestamp}
