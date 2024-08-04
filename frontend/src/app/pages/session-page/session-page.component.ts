@@ -51,6 +51,7 @@ export class SessionPageComponent {
 
   ngOnInit() {
     this.sessionService.isActive.subscribe((isActive) => {
+      console.log(isActive);
       if (isActive) {
         this.timerInterval = setInterval((_: any) => {
           if (!this.sessionService.isPaused.value) {

@@ -6,7 +6,7 @@ import { Injectable } from '@angular/core';
 })
 export class ApiService {
   constructor(private http: HttpClient) {}
-  private endpoint = 'http://localhost:3000';
+  private endpoint = 'http://localhost:8000';
 
   post<T>(url: string, body: any, headers?: HttpHeaders) {
     const options = { headers, withCredentials: true };

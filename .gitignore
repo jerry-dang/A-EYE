@@ -1,4 +1,5 @@
 /aeye-env
+/backend/aeye/my-venv
 /image_processing/my-venv/
 /image_processing/test_images/
 /image_processing/neutral_images/

@@ -37,7 +37,7 @@ export class SessionService {
     string | undefined
   >(undefined);
   public id: BehaviorSubject<string | undefined> = new BehaviorSubject<
-    string | undefined
+    any | undefined
   >(undefined);
   public elapsedTime: BehaviorSubject<number> = new BehaviorSubject(0);
 
@@ -49,8 +49,8 @@ export class SessionService {
     this.startTime.next(dateTime);
   }
 
-  setNoiseLevel(noiseLevel: string) {
-    this.noiseLevel.next(noiseLevel);
+  setNoiseLevel(noise_level: string) {
+    this.noiseLevel.next(noise_level);
   }
 
   startSession() {
@@ -59,20 +59,21 @@ export class SessionService {
     console.log({
       location: this.location.value,
       startTime: startTime,
-      noiseLevel: this.noiseLevel.value,
+      noise_level: this.noiseLevel.value,
     });
     this.apiService
-      .post<res>('/start_session', {
+      .post<string>('/start_session/', {
         location: this.location.value,
-        startTime: startTime,
-        noiseLevel: this.noiseLevel.value,
+        // startTime: startTime,
+        noise_level: this.noiseLevel.value,
       })
       .subscribe((res) => {
-        if (res.session_id) {
+        console.log(res);
+
           this.isActive.next(true);
-          this.id.next(res.session_id!);
+          this.id.next(res);
           this.startTime.next(startTime);
-        }
+
       });
   }
 
@@ -87,22 +88,23 @@ export class SessionService {
   }
 
   stopSession() {
+    this.isActive.next(false);
     this.pauseTimer();
     this.elapsedTime.next(0);
-    this.apiService.post('/end_session', { session_id: this.id.value });
-    this.isActive.next(false);
+    this.apiService.post('/end_session/', { session_id: this.id.value });
     this.location.next(undefined);
     this.startTime.next(undefined);
   }
 
   postImage(image: string) {
+    console.log(this.id.value);
     // image string is b64-encoded
     this.apiService
-      .post('/save_image', {
-        image: image,
-        timeStamp: this.startTime.value,
-        userId: 'lalala',
-        sessionId: this.id.value,
+      .post('/save_image/', {
+        base64_string: image,
+        // timeStamp: this.startTime.value,
+        // userId: 'lalala',
+        session_id: this.id.value,
       })
       .subscribe((_) => {
         //
