@@ -1,5 +1,5 @@
 # A-EYE
-Need help improving your studying? AEYE is an innovative study helper using eye-tracking technology and facial recognition to analyze an individual's study productivity.
+Need help improving your studying? AEYE is an innovative study helper using **eye-tracking** technology and **facial recognition** to analyze an individual's _study productivity_.
 
 ## Inspiration
 Studying in different environments can significantly impact focus and productivity. We were inspired to analyze if we could determine an optimal environment that yields the highest productivity score over a period of time using image analysis. By leveraging eye-tracking technology and facial recognition, we aimed to create an innovative study helper that provides insights into an individual's study productivity.
