@@ -17,6 +17,6 @@ class Images(models.Model):
 
 class Image_data(models.Model):
     face_data = models.CharField(max_length=255)
-    timestamp = models.DateTimeField(auto_now_add=True)
+    timestamp = models.DateTimeField()
     session_id = models.ForeignKey(StudySessions, null=True, on_delete=models.SET_NULL)
-    focus_level = models.IntegerField()
+    focus_level = models.DecimalField(decimal_places=2, max_digits=3)

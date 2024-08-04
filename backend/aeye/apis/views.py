@@ -37,25 +37,36 @@ class EndSessionView(views.APIView):
             session_object.end_time = timezone.now()  # Set end_time to the current time
             session_object.save()
             list_of_images = Images.objects.filter(session_id=session_id)
+            print(list_of_images)
             base64_images = []
             for image in list_of_images:
                 # base64_encoded = base64.b64encode(image.binary_encoding).decode('utf-8')
                 base64_images.append({
                     'timestamp': image.timestamp,
-                    'binary_encoding': image.base64_encoding
+                    'base64_encoded': image.b64_encoding
                 })
-            
+            # print(base64_images)
             #get_all_image(list_of_images, list_of_images_converted)
             #call algorithm 
             print("==== I WAS HERE === ")
-            print(base64_images)
-            dataAggregator = DataAggregator(list_of_images)
+            # print(base64_images)
+            dataAggregator = DataAggregator(base64_images)
             res = dataAggregator.process_images()
             print(res)
 
             #here algorithm(list_of_images_converted)
             #call algorithm
             # list_of_images.delete() TODO: bring back in production
+            
+            # save the data points
+            for data in res:
+                image_data = Image_data(
+                    face_data=str(data["face_data"]),
+                    timestamp=data["timestamp"],
+                    session_id=session_object,
+                    focus_level=data["focus"]
+                )
+                image_data.save()
             return Response(None, status=status.HTTP_200_OK)
         except StudySessions.DoesNotExist:
             return Response({'error': 'Session not found'}, status=status.HTTP_404_NOT_FOUND)
