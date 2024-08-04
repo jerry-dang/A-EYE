@@ -6,12 +6,12 @@ import uuid
 class SessionsSerializer(serializers.ModelSerializer):
     class Meta:
         model = StudySessions
-        fields = ['location', 'start_time', 'end_time', 'noise_level', 'session_id']
+        fields = ['location', 'start_time', 'end_time', 'noise_level']
 
 class ImagesSerializer(serializers.ModelSerializer):
     class Meta:
         model = Images
-        fields = ['image_id', 'timestamp', 'user_id', 'session_id', 'binary_encoding']
+        fields = ['image_id', 'timestamp', 'session_id', 'b64_encoding']
 
 
     def create(self, validated_data):
@@ -34,6 +34,6 @@ class ImagesSerializer(serializers.ModelSerializer):
 class ImageDataSerializer(serializers.ModelSerializer):
     class Meta:
         model = Image_data
-        fields = ['face_data', 'timestamp', 'user_id', 'session_id', 'focus_level']
+        fields = ['face_data', 'timestamp', 'session_id', 'focus_level']
     
     

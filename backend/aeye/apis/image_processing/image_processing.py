@@ -7,7 +7,7 @@ import numpy as np
 import base64
 
 from deepface import DeepFace
-from gaze_tracking.gaze_tracking import GazeTracking
+from .gaze_tracking.gaze_tracking import GazeTracking
 
 os.chdir(os.path.dirname(os.path.abspath(__file__))) # TODO: remove
 
@@ -109,8 +109,8 @@ class ImageProcessor:
 
 class DataAggregator:
     # add images parameter and initialize it as self.images to replace the grab_images() function
-    def __init__(self, study_session_id):
-        self.study_session_id = study_session_id
+    def __init__(self, images):
+        self.images = images
         self.image_processor = ImageProcessor()
         self.emotions = set(["sad", "angry", "surprise", "fear", "happy",
             "disgust", "neutral"])
@@ -160,7 +160,10 @@ class DataAggregator:
         # aggregate
     
     def process_images(self):
-        images = self.grab_images()
+        if not self.images:
+            return []
+        # images = self.grab_images()
+        images = self.images
         images.sort(key=lambda x: x["timestamp"])
 
         # sort images by timestamp
@@ -266,8 +269,8 @@ class DataAggregator:
 
     
 
-func = DataAggregator(1)
-print(func.process_images())
+# func = DataAggregator(1)
+# print(func.process_images())
 
 """
 Demonstration of the GazeTracking library.
