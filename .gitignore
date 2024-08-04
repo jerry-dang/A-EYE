@@ -3,3 +3,5 @@
 /image_processing/test_images/
 /image_processing/neutral_images/
 **/__pycache__/*
+**/my-venv/*
+**/.DS_Store
