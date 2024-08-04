@@ -23,6 +23,7 @@ export class SessionService {
   public isActive: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(
     false
   );
+  public isPaused: BehaviorSubject<boolean> = new BehaviorSubject(false);
   public location: BehaviorSubject<string | undefined> = new BehaviorSubject<
     string | undefined
   >(undefined);
@@ -71,7 +72,12 @@ export class SessionService {
 
   pauseSession() {
     this.pauseTimer();
-    this.isActive.next(false);
+    this.isPaused.next(true);
+  }
+
+  resumeSession() {
+    this.startTimer();
+    this.isPaused.next(false);
   }
 
   stopSession() {

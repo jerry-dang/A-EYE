@@ -14,8 +14,20 @@
       <div class="px-1" (click)="startSession()">Start Session</div>
     </div>
     <div
+      class="btn btn-start d-flex px-1"
+      *ngIf="
+        this.sessionService.isActive.value && this.sessionService.isPaused.value
+      "
+    >
+      <mat-icon>play_arrow</mat-icon>
+      <div class="px-1" (click)="resumeSession()">Resume Session</div>
+    </div>
+    <div
       class="d-flex align-items-center justify-content-center"
-      *ngIf="this.sessionService.isActive.value"
+      *ngIf="
+        this.sessionService.isActive.value &&
+        !this.sessionService.isPaused.value
+      "
     >
       <div
         role="button"

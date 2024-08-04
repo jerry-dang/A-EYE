@@ -21,6 +21,10 @@ export class SessionsToolbarComponent {
     this.router.navigate(['/']);
   }
 
+  resumeSession() {
+    this.sessionService.resumeSession();
+  }
+
   startSession() {
     this.sessionService.startSession();
     this.sessionService.isActive.next(true);
@@ -28,7 +32,6 @@ export class SessionsToolbarComponent {
 
   pauseSession() {
     this.sessionService.pauseSession();
-    this.sessionService.isActive.next(false);
   }
 
   stopSession() {

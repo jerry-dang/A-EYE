@@ -5,12 +5,7 @@ import { CommonModule } from '@angular/common';
 import { SessionsToolbarComponent } from '../../components/sessions-toolbar/sessions-toolbar.component';
 import { SessionService } from '../../services/session.service';
 import { DropdownModule } from 'primeng/dropdown';
-import {
-  FormBuilder,
-  FormGroup,
-  FormsModule,
-  ReactiveFormsModule,
-} from '@angular/forms';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 
 @Component({
   selector: 'app-session-page',
@@ -41,7 +36,9 @@ export class SessionPageComponent {
     this.sessionService.isActive.subscribe((isActive) => {
       if (isActive) {
         this.timerInterval = setInterval((_: any) => {
-          this.triggerSnapshot();
+          if (!this.sessionService.isPaused.value) {
+            this.triggerSnapshot();
+          }
         }, 2000);
       } else {
         clearInterval(this.timerInterval);
