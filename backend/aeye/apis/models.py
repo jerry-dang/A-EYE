@@ -21,7 +21,7 @@ class Images(models.Model):
     binary_encoding = models.BinaryField()
 
 class Image_data(models.Model):
-    face_data = models.JSONField()
+    face_data = models.CharField(max_length=255)
     timestamp = models.DateTimeField(auto_now_add=True)
     user_id = models.CharField(max_length=255)
     session_id = models.CharField(max_length=255)
