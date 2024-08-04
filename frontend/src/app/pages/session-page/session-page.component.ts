@@ -5,7 +5,10 @@ import { CommonModule } from '@angular/common';
 import { SessionsToolbarComponent } from '../../components/sessions-toolbar/sessions-toolbar.component';
 import { SessionService } from '../../services/session.service';
 import { DropdownModule } from 'primeng/dropdown';
-import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { FormControl, FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatSelectModule } from '@angular/material/select';
+import { MatInputModule } from '@angular/material/input';
 
 @Component({
   selector: 'app-session-page',
@@ -17,6 +20,9 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
     DropdownModule,
     FormsModule,
     ReactiveFormsModule,
+    MatFormFieldModule,
+    MatSelectModule,
+    MatInputModule,
   ],
   templateUrl: './session-page.component.html',
   styleUrl: './session-page.component.scss',
@@ -31,6 +37,17 @@ export class SessionPageComponent {
 
   timerInterval: any; // interval for polling image capture
   POLLING_INTERVAL = 2000; // snapshot poll every 2 seconds
+
+  noiseLevels = ['quiet', 'moderate', 'loud'];
+  control = new FormControl('');
+  location = '';
+  onLocationChange(newLocation: string): void {
+    this.sessionService.setLocation(newLocation);
+  }
+  selectedNoiseLevel = 'quiet';
+  onNoiseLevelChange(newNoiseLevel: string) {
+    this.sessionService.setNoiseLevel(newNoiseLevel);
+  }
 
   ngOnInit() {
     this.sessionService.isActive.subscribe((isActive) => {
@@ -52,7 +69,6 @@ export class SessionPageComponent {
 
   handleImage(webcamImage: WebcamImage): void {
     this.webcamImage = webcamImage;
-    console.log(webcamImage.imageAsBase64);
     this.sessionService.postImage(webcamImage.imageAsBase64);
   }
 

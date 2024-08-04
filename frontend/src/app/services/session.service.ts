@@ -33,8 +33,9 @@ export class SessionService {
   public endTime: BehaviorSubject<Date | undefined> = new BehaviorSubject<
     Date | undefined
   >(undefined);
-  public noiseLevel: BehaviorSubject<NoiseLevel | undefined> =
-    new BehaviorSubject<NoiseLevel | undefined>(undefined);
+  public noiseLevel: BehaviorSubject<string | undefined> = new BehaviorSubject<
+    string | undefined
+  >(undefined);
   public id: BehaviorSubject<string | undefined> = new BehaviorSubject<
     string | undefined
   >(undefined);
@@ -48,13 +49,18 @@ export class SessionService {
     this.startTime.next(dateTime);
   }
 
-  setNoiseLevel(noiseLevel: NoiseLevel) {
+  setNoiseLevel(noiseLevel: string) {
     this.noiseLevel.next(noiseLevel);
   }
 
   startSession() {
     const startTime = new Date();
     this.startTimer();
+    console.log({
+      location: this.location.value,
+      startTime: startTime,
+      noiseLevel: this.noiseLevel.value,
+    });
     this.apiService
       .post<res>('/start_session', {
         location: this.location.value,

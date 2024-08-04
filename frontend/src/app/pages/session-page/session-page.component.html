@@ -12,21 +12,25 @@
       class="w-100 ps-3 pe-3 d-flex align-items-center flex-column justify-content-between"
     >
       <div>
-        <input
-          [disabled]="this.sessionService.isActive.value"
-          class="rounded textbox w-100 h-2"
-          placeholder="Location"
-        />
-        <select
-          [disabled]="this.sessionService.isActive.value"
-          name="cars"
-          id="cars"
-          class="w-100 mt-1 rounded textbox"
-        >
-          <option value="quiet">Quiet</option>
-          <option value="moderate">Moderate</option>
-          <option value="loud">Loud</option>
-        </select>
+        <mat-form-field class="w-100">
+          <mat-label>Location</mat-label>
+          <input
+            matInput
+            [(ngModel)]="location"
+            (ngModelChange)="onLocationChange($event)"
+          />
+        </mat-form-field>
+        <mat-form-field class="w-100">
+          <mat-label>Noise level</mat-label>
+          <mat-select
+            [(ngModel)]="selectedNoiseLevel"
+            (ngModelChange)="onNoiseLevelChange($event)"
+          >
+            <mat-option *ngFor="let level of noiseLevels" [value]="level">{{
+              level
+            }}</mat-option>
+          </mat-select>
+        </mat-form-field>
       </div>
 
       <div class="ms-1">
