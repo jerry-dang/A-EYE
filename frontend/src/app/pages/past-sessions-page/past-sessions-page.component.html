@@ -1,0 +1,22 @@
+<app-toolbar class="w-100"></app-toolbar>
+<div *ngIf="isLoaded" class="table-responsive w-100 px-2 py-2">
+  <table class="table-hover w-100">
+    <tbody>
+      <tr *ngFor="let session of sessions; let i = index" class="problem-row">
+        <td>
+          <div
+            role="button"
+            class="session-item py-3 mt-2 px-2 rounded"
+            (click)="navigateHistory(session.id)"
+          >
+            {{ formatDate(session.end_time) }}
+          </div>
+        </td>
+      </tr>
+    </tbody>
+  </table>
+</div>
+
+<div class="w-100 h-100 d-flex justify-content-center align-items-center">
+  <mat-spinner></mat-spinner>
+</div>

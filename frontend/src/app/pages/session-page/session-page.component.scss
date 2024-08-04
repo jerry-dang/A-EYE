@@ -1,0 +1,12 @@
+@import "../../../styles.scss";
+
+.camera-container {
+  background-color: $primary-color;
+  min-width: 620px;
+}
+
+.textbox {
+  background-color: $background-color;
+  border-style: solid;
+  border-color: $background-secondary-color;
+}

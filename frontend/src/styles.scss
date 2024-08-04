@@ -1,1 +1,27 @@
-/* You can add global styles to this file, and also import other style files */
+@import "../node_modules/bootstrap/scss/bootstrap.scss";
+@import '@angular/material/prebuilt-themes/indigo-pink.css';
+
+// Global variables
+$fonts: Roboto, "Helvetica Neue", sans-serif;
+$background-color: rgb(252, 236, 211);
+$background-secondary-color: rgb(221,157,107);
+$primary-color: rgb(225, 167, 119);
+$primary-highlighted-color: #F4C092;
+$secondary-color: #4c6444;
+$placeholder-color: grey;
+
+body {
+  background-color: $background-color !important;
+  color: black !important;
+}
+
+html,
+body {
+  height: 100%;
+  font-size: 16px;
+}
+
+body {
+  margin: 0;
+  font-family: $fonts;
+}

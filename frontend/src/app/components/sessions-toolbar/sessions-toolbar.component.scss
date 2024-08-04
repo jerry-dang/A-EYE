@@ -1,0 +1,25 @@
+@import "../../../styles.scss";
+
+.btn-start {
+  background-color: $primary-color;
+}
+
+.btn-start:hover {
+  background-color: $primary-highlighted-color;
+}
+
+.btn-history:hover {
+  background-color: $background-secondary-color;
+}
+
+.toolbar {
+  background-color: $background-color;
+}
+
+.icon-local {
+  color: black;
+}
+
+.btn-sub {
+  border-color: $background-color;
+}

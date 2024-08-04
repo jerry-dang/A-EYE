@@ -1,0 +1,9 @@
+@import "../../../styles.scss";
+
+.session-item {
+  background-color: $background-secondary-color;
+}
+
+.session-item:hover {
+  background-color: $primary-highlighted-color;
+}
