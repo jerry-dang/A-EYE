@@ -25,6 +25,16 @@ class StartSessionView(views.APIView):
             session_object.save()
             return Response(session_object.id, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+    
+    def get(self, request):
+        sessions = StudySessions.objects.filter(end_time__isnull=False)
+        serializer = SessionsSerializer(sessions, many=True)
+        
+        data = serializer.data
+        print(data)
+        # Return the serialized data
+        #serializer.data
+        return Response(data, status=status.HTTP_200_OK)
 
 class EndSessionView(views.APIView):
     def post(self, request, format=None):

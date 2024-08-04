@@ -125,4 +125,12 @@ export class SessionService {
     clearInterval(this.timerInterval);
     this.timerInterval = null;
   }
+
+  getSession(sessionId: number) {
+    return this.apiService.get<any>(`/get_image_data/?session_id=${sessionId}`);
+  }
+
+  getSessionList() {
+    return this.apiService.get<any>(`/start_session/`);
+  }
 }

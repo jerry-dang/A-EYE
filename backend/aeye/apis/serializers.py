@@ -6,7 +6,7 @@ import uuid
 class SessionsSerializer(serializers.ModelSerializer):
     class Meta:
         model = StudySessions
-        fields = ['location', 'start_time', 'end_time', 'noise_level']
+        fields = ['location', 'start_time', 'end_time', 'noise_level', 'id']
 
 class ImagesSerializer(serializers.ModelSerializer):
     class Meta:
