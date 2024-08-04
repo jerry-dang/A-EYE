@@ -37,7 +37,7 @@ The frontend captures images from video and sends them to the backend. We then u
 - Eye gaze model not 100% accurate which could lead to discrepancies in the data collected
 - Multiple faces could be detected
 
-## What's next for AEYE
+## What's next for A-EYE
 - Enhancing the accuracy and reliability of the gaze tracking and facial recognition components
 - Implementing user feedback to improve the focus algorithm as every student exhibits different behaviors when studying
 - Ensure privacy by processing data onsite vs on the server
