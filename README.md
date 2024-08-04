@@ -1,4 +1,4 @@
-# A-EYE
+# A-EYE 👀
 Need help improving your studying? AEYE is an innovative study helper using **eye-tracking** technology and **facial recognition** to analyze an individual's _study productivity_.
 
 ## Inspiration
