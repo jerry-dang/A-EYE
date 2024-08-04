@@ -32,11 +32,17 @@ The frontend captures images from video and sends them to the backend. The backe
 - How to process and analyze large volumes of image data efficiently
 - The value of using scientific research to inform our focus score calculations
 
+## Limitations
+- Hard to distinguish person looking down when thinking or looking at their paper vs when person is looking at their phone (assuming phone is out of frame)
+- Arbitrary weights could yield innacurate results
+- Eye gaze model not 100% accurate which could lead to discrepancies in the data collected
+
 ## What's next for AEYE
 - Enhancing the accuracy and reliability of the gaze tracking and facial recognition components
 - Expanding the system to analyze additional factors that may affect study productivity, such as lighting and background noise
 - Implementing user feedback to improve the overall user experience and cater to specific user habits and needs
-- Add authentication along with unique user IDs in order for the product to be scalable 
+- Add authentication along with unique user IDs in order for the product to be scalable
+- Build our own model for eye tracking for more accurate results
 
 ## References
 1. [Analysis of Learners' Emotions in E-Learning Environments Based on Cognitive Sciences](https://www.researchgate.net/publication/380588073_Analysis_of_Learners'_Emotions_in_E-Learning_Environments_Based_on_Cognitive_Sciences)
