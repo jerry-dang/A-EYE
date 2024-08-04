@@ -124,7 +124,7 @@ class DataAggregator:
 
     def grab_images(self):
         # TODO: connect to db and grab all images under self.study_session_id
-        with open("./test_images/kevin_neutral_5.jpg", "rb") as image:
+        with open("./test_images/jerry_neutral.png", "rb") as image:
             image_data = image.read()
             base64_encoded = base64.b64encode(image_data)
         return [{"base64_encoded": base64_encoded, "timestamp": datetime.datetime(2024, 7, 26, 15, 30, 00)}]
@@ -194,10 +194,10 @@ class DataAggregator:
         total_emotion_count = sum(emotion_count.values())
         total_gaze_area_count = sum(gaze_area_count.values())
         for emotion, count in emotion_count.items():
-            fitness += 0.7 * self.weights.get(emotion, 0) * count / total_emotion_count
+            fitness += 0.7 * self.weights.get(emotion, 0) * count / max(1, total_emotion_count)
 
         for gaze, count in gaze_area_count.items():
-            fitness += 0.3 * self.weights.get(gaze, 0) * count / total_gaze_area_count
+            fitness += 0.3 * self.weights.get(gaze, 0) * count / max(1, total_gaze_area_count)
 
         # penalize if theres "spread out" freq. eg. dont penalize 1 1 1 3 2 but penalize 1 1 2 3 4 5
         max_emotion_count = max(emotion_count.values())
