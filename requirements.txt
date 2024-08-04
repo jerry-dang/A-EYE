@@ -1,5 +1,5 @@
 django
-pymongo
+pymongo==3.12.3
 djongo
 pytz
 djangorestframework
