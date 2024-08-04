@@ -37,3 +37,7 @@ The frontend captures images from video and sends them to the backend. The backe
 - Expanding the system to analyze additional factors that may affect study productivity, such as lighting and background noise
 - Implementing user feedback to improve the overall user experience and cater to specific user habits and needs
 - Add authentication along with unique user IDs in order for the product to be scalable 
+
+## Studies used
+1. [Analysis of Learners' Emotions in E-Learning Environments Based on Cognitive Sciences](https://www.researchgate.net/publication/380588073_Analysis_of_Learners'_Emotions_in_E-Learning_Environments_Based_on_Cognitive_Sciences)
+2. [Gaze direction as a facial cue of memory retrieval state](https://www.frontiersin.org/journals/psychology/articles/10.3389/fpsyg.2022.1063228/full)
