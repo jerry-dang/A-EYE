@@ -16,36 +16,42 @@ class ImageProcessor:
         self.gaze_tracker = GazeTracking()
         print("Image Processor Initialized")
 
-    # def gaze_region(self, height, width, left_pupil, right_pupil):
-    #     """Returns the general region in which the pupil's are gazing at"""
-    #     inner_x_min = width * 0.2
-    #     inner_x_max = width * 0.8
-    #     inner_y_min = height * 0.2
-    #     inner_y_max = height * 0.8
+    def gaze_region(self, height, width, left_pupil, right_pupil):
+        """Returns the general region in which the pupil's are gazing at"""
+        inner_x_min = width * 0.2
+        inner_x_max = width * 0.8
+        inner_y_min = height * 0.2
+        inner_y_max = height * 0.8
 
-    #     def is_inner_region(pupil):
-    #         if pupil is None:
-    #             return False
-    #         x, y = pupil
-    #         return inner_x_min <= x <= inner_x_max and inner_y_min <= y <= inner_y_max
+        def is_inner_region(pupil):
+            if pupil is None:
+                return False
+            x, y = pupil
+            return inner_x_min <= x <= inner_x_max and inner_y_min <= y <= inner_y_max
         
-    #     if (left_pupil == None and right_pupil == None):
-    #         return [3, 3]
+        if (left_pupil == None and right_pupil == None):
+            return "off-screen"
             
-    #     left_region = 1 if is_inner_region(left_pupil) else 2
-    #     right_region = 1 if is_inner_region(right_pupil) else 2
+        if (is_inner_region(left_pupil) and is_inner_region(right_pupil)):
+            return "inner"
+        else:
+            return "outer"
+    
+    def region_processor(self, image=None):
+        image = cv2.imdecode(image, cv2.IMREAD_COLOR)
+        self.gaze_tracker.refresh(image)
+        height, width, _ = image.shape
+        left_pupil_pos = self.gaze_tracker.pupil_left_coords()
+        right_pupil_pos = self.gaze_tracker.pupil_right_coords()
+        region = self.gaze_region(height, width, left_pupil_pos, right_pupil_pos)
 
-    #     return [left_region, right_region]
+        return region
 
     def gaze_processor(self, image=None):
         # decoded_data = base64.b64decode(image)
         # nparr = np.frombuffer(decoded_data, np.uint8) # already turnt into nparr in caller func
         image = cv2.imdecode(image, cv2.IMREAD_COLOR)
         self.gaze_tracker.refresh(image)
-        # height, width, _ = image.shape
-        # left_pupil_pos = self.gaze_tracker.pupil_left_coords()
-        # right_pupil_pos = self.gaze_tracker.pupil_right_coords()
-        # region = self.gaze_region(height, width, left_pupil_pos, right_pupil_pos)
 
         if self.gaze_tracker.is_up():
             gaze_direction = "up"
@@ -88,6 +94,8 @@ class ImageProcessor:
         except:
             data["gaze_area"] = "off"
 
+        data["gaze_region"] = self.region_processor(nparr)
+
         return data
 
         
@@ -100,12 +108,14 @@ class ImageProcessor:
 
 
 class DataAggregator:
+    # add images parameter and initialize it as self.images to replace the grab_images() function
     def __init__(self, study_session_id):
         self.study_session_id = study_session_id
         self.image_processor = ImageProcessor()
         self.emotions = set(["sad", "angry", "surprise", "fear", "happy",
             "disgust", "neutral"])
-        self.gaze_areas = set(["up", "down", "left", "right", "center", "offs"]) # 1 for center, 2 for outer rim, 3 for off screen
+        self.gaze_areas = set(["up", "down", "left", "right", "center", "off"])
+        self.gaze_regions = set(["inner", "outer", "off-screen"]) # 1 for inner, 2 for outer, 3 for off-screen
         self.weights = {
             "happy": 0.3,
             "neutral": 1,
@@ -119,7 +129,10 @@ class DataAggregator:
             "down": 0.7, 
             "left": 0.35,
             "right": 0.2,
-            "off": 0
+            "off": 0,
+            "inner": 1.0,
+            "outer": 0.5,
+            "off-screen": 0.1
         }
 
     def grab_images(self):
@@ -131,7 +144,7 @@ class DataAggregator:
                 with open(file_path, "rb") as image:
                     image_data = image.read()
                     base64_encoded = base64.b64encode(image_data)
-                    seconds = random.randint(0, 17)
+                    seconds = random.randint(0, 28)
                     image_list.append({"base64_encoded": base64_encoded, "timestamp": datetime.datetime(2024, 7, 26, 15, 30, 00) + datetime.timedelta(seconds=seconds)})
     
         return image_list
@@ -184,16 +197,20 @@ class DataAggregator:
         start_timestamp = bucket[0]["timestamp"] # should be sorted by timestamp
         emotion_count = {emotion: 0 for emotion in self.emotions}
         gaze_area_count = {gaze_id: 0 for gaze_id in self.gaze_areas}
+        region_count = {region_id: 0 for region_id in self.gaze_regions}
         for data in bucket:
             dominant_emotion = data["dominant_emotion"]
             gaze_area = data["gaze_area"]
+            region = data["gaze_region"]
             if dominant_emotion in emotion_count:
                 emotion_count[dominant_emotion] += 1
             if gaze_area in gaze_area_count:
                 gaze_area_count[gaze_area] += 1
+            if region in region_count:
+                region_count[region] += 1
         
 
-        face_data = {"dominant_emotions": emotion_count, "gaze_area": gaze_area_count}
+        face_data = {"dominant_emotions": emotion_count, "gaze_area": gaze_area_count, "gaze_region": region_count}
         fitness = self.determine_fitness(face_data)
         
         processed_image = {"face_data": face_data, "focus": fitness, "timestamp": start_timestamp}
@@ -203,25 +220,46 @@ class DataAggregator:
         # calculate weighted average
         emotion_count = bucket["dominant_emotions"]
         gaze_area_count = bucket["gaze_area"]
+        region_count = bucket["gaze_region"]
         fitness = 0
 
         total_emotion_count = sum(emotion_count.values())
         total_gaze_area_count = sum(gaze_area_count.values())
+        total_region_count = sum(region_count.values())
         for emotion, count in emotion_count.items():
-            fitness += 0.7 * self.weights.get(emotion, 0) * count / max(1, total_emotion_count)
+            fitness += 0.6 * self.weights.get(emotion, 0) * count / max(1, total_emotion_count)
 
         for gaze, count in gaze_area_count.items():
             fitness += 0.3 * self.weights.get(gaze, 0) * count / max(1, total_gaze_area_count)
+
+        for region, count in region_count.items():
+            fitness += 0.1 * self.weights.get(region, 0) * count / max(1, total_region_count)
+
+        # reward if theres more focus on one region of the screen eg. 1 1 1 1 2 or 2 2 2 2 2
+        max_region_count = max(region_count.values())
+        max_region = max(region_count, key=region_count.get)
 
         # penalize if theres "spread out" freq. eg. dont penalize 1 1 1 3 2 but penalize 1 1 2 3 4 5
         fitness *= 10
         max_emotion_count = max(emotion_count.values())
         if max_emotion_count < 0.6 * total_emotion_count:
-            fitness -= (total_emotion_count - max_emotion_count) * 0.2
+            if max_region =="outer" or max_region == "off-screen":
+                fitness -= (total_emotion_count - max_emotion_count) * 0.15
+            elif max_region_count > 0.6 * total_region_count:
+                fitness -= (total_emotion_count - max_emotion_count) * 0.05
+            else:
+                fitness -= (total_emotion_count - max_emotion_count) * 0.1
 
         max_gaze_count = max(gaze_area_count.values())
+
         if max_gaze_count < 0.6 * total_gaze_area_count:
-            fitness -= (total_gaze_area_count - max_gaze_count) * 0.2
+            if (max_region_count > 0.6 * total_region_count) and (max_region == "outer" or max_region == "off-screen"):
+                fitness -= (total_gaze_area_count - max_gaze_count) * 0.25
+            elif (max_region_count > 0.6 * total_region_count) and (max_region =="inner"):
+                fitness -= (total_gaze_area_count - max_gaze_count) * 0.05
+            else:
+                fitness -= (total_gaze_area_count - max_gaze_count) * 0.2
+
 
         return max(1, round(fitness, 2))
         
