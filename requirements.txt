@@ -1,0 +1,8 @@
+django
+pymongo
+djongo
+pytz
+djangorestframework
+markdown
+django-filter
+sqlparse==0.2.4
