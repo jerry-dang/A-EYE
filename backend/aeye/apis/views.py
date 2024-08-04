@@ -73,7 +73,7 @@ class SaveImageView(views.APIView):
                 binary_encoding=binary_encoding
             )
             image.save()
-            
+        
             return Response({'message': 'Image saved successfully', 'image_id': image_id}, status=status.HTTP_201_CREATED)
         
         except (base64.binascii.Error, ValueError) as e:
@@ -105,5 +105,10 @@ class ImageDataView(views.APIView):
 
 def get_all_image(list_image, new_list):
     for image in list_image:
-        new_list.append(base64.b64encode(image.binary_encoding).decode('utf-8'))
+        obj = {}
+        converted_string = base64.b64encode(image.binary_encoding).decode('utf-8')
+        obj["base64_encoded"] = converted_string
+        obj["timestamp"] = image.timestamp
+        new_list.append(obj)
+        
     
