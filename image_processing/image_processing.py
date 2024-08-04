@@ -114,11 +114,12 @@ class DataAggregator:
             "angry": 0.2,
             "sad": 0.3,
             "disgust": 0.1,
-            "up": 1,
+            "up": 0.9,
             "center": 1,
-            "down": 0.2, 
-            "left": 0.2,
-            "right": 0.2
+            "down": 0.7, 
+            "left": 0.35,
+            "right": 0.2,
+            "off": 0
         }
 
     def grab_images(self):
