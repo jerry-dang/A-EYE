@@ -3,3 +3,9 @@
 .camera-container {
   background-color: $primary-color;
 }
+
+.textbox {
+  background-color: $background-color;
+  border-style: solid;
+  border-color: $background-secondary-color;
+}

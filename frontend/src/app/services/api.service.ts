@@ -1,10 +1,6 @@
 import { HttpClient, HttpHeaders, HttpParams } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 
-interface res {
-  session_id?: string;
-}
-
 @Injectable({
   providedIn: 'root',
 })

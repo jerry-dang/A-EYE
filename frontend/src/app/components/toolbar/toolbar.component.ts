@@ -14,4 +14,8 @@ export class ToolbarComponent {
   navigateToSessionPage() {
     this.router.navigate(['/session']);
   }
+
+  goHome() {
+    this.router.navigate(['/']);
+  }
 }

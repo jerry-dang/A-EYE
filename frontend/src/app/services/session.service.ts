@@ -37,6 +37,7 @@ export class SessionService {
   public id: BehaviorSubject<string | undefined> = new BehaviorSubject<
     string | undefined
   >(undefined);
+  public elapsedTime: BehaviorSubject<number> = new BehaviorSubject(0);
 
   setLocation(location: string) {
     this.location.next(location);
@@ -51,18 +52,35 @@ export class SessionService {
   }
 
   startSession() {
+    const startTime = new Date();
+    this.startTimer();
     this.apiService
       .post<res>('/start_session', {
         location: this.location.value,
-        startTime: this.startTime.value,
+        startTime: startTime,
         noiseLevel: this.noiseLevel.value,
       })
       .subscribe((res) => {
         if (res.session_id) {
           this.isActive.next(true);
           this.id.next(res.session_id!);
+          this.startTime.next(startTime);
         }
       });
+  }
+
+  pauseSession() {
+    this.pauseTimer();
+    this.isActive.next(false);
+  }
+
+  stopSession() {
+    this.pauseTimer();
+    this.elapsedTime.next(0);
+    this.apiService.post('/end_session', { session_id: this.id.value });
+    this.isActive.next(false);
+    this.location.next(undefined);
+    this.startTime.next(undefined);
   }
 
   postImage(image: string) {
@@ -70,10 +88,27 @@ export class SessionService {
     this.apiService
       .post('/save_image', {
         image: image,
-        timeStamp: new Date(),
+        timeStamp: this.startTime.value,
         userId: 'lalala',
         sessionId: this.id.value,
       })
-      .subscribe();
+      .subscribe((_) => {
+        //
+      });
+  }
+
+  timerInterval: any;
+  startTimer() {
+    if (this.timerInterval) {
+      return;
+    }
+    this.timerInterval = setInterval(() => {
+      this.elapsedTime.next(this.elapsedTime.value + 1);
+    }, 1000);
+  }
+
+  pauseTimer() {
+    clearInterval(this.timerInterval);
+    this.timerInterval = null;
   }
 }

@@ -1,18 +1,37 @@
 <div>
   <app-sessions-toolbar></app-sessions-toolbar>
-  <div class="d-flex justify-content-center">
-    <div class="camera-container px-2 py-2">
+  <div class="d-flex camera-container py-3 mx-2 rounded-1">
+    <div class="ps-3 pe-1">
       <webcam
+        [width]="340"
         [trigger]="triggerObservable"
         (imageCapture)="handleImage($event)"
       ></webcam>
     </div>
-    <div>
-      <!-- <mat-select>
-        @for (level of noiseLevels; track level) {
-        <mat-option [value]="level">level</mat-option>
-        }
-      </mat-select> -->
+    <div
+      class="w-100 ps-3 pe-3 d-flex align-items-center flex-column justify-content-between"
+    >
+      <div>
+        <input
+          [disabled]="this.sessionService.isActive.value"
+          class="rounded textbox w-100 h-2"
+          placeholder="Location"
+        />
+        <select
+          [disabled]="this.sessionService.isActive.value"
+          name="cars"
+          id="cars"
+          class="w-100 mt-1 rounded textbox"
+        >
+          <option value="quiet">Quiet</option>
+          <option value="moderate">Moderate</option>
+          <option value="loud">Loud</option>
+        </select>
+      </div>
+
+      <div class="ms-1">
+        Elapsed time: {{ formatTime(this.sessionService.elapsedTime.value) }}
+      </div>
     </div>
   </div>
 </div>
