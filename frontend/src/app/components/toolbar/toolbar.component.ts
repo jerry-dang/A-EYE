@@ -15,6 +15,10 @@ export class ToolbarComponent {
     this.router.navigate(['/session']);
   }
 
+  goToHistory() {
+    this.router.navigate(['/history']);
+  }
+
   goHome() {
     this.router.navigate(['/']);
   }

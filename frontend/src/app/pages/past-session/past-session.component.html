@@ -1,0 +1,22 @@
+<app-toolbar></app-toolbar>
+<div class="w-100 h-100 background">
+  <div class="px-3">
+    <app-line-graph></app-line-graph>
+    <div class="mt-5 mx-5 d-flex justify-content-between">
+      <div class="d-flex flex-column justify-content-center align-items-center">
+        <mat-spinner
+          mode="determinate"
+          [value]="7.5 * 10"
+          diameter="100"
+          stroke-width="10"
+        >
+        </mat-spinner>
+        <div class="mt-1">Session Score: 7.5</div>
+      </div>
+      <div class="d-flex flex-column align-items-center justify-content-center">
+        <div>Venue: Home</div>
+        <div>Noise: Quiet</div>
+      </div>
+    </div>
+  </div>
+</div>

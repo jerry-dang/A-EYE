@@ -21,6 +21,10 @@ export class SessionsToolbarComponent {
     this.router.navigate(['/']);
   }
 
+  goToHistory() {
+    this.router.navigate(['/history']);
+  }
+
   resumeSession() {
     this.sessionService.resumeSession();
   }

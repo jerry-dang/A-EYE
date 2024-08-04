@@ -1,7 +1,6 @@
 import { Component } from '@angular/core';
 import { ToolbarComponent } from '../../components/toolbar/toolbar.component';
 import { SessionPageComponent } from '../session-page/session-page.component';
-import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-landing-page',
