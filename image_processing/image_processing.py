@@ -106,7 +106,20 @@ class DataAggregator:
         self.emotions = set(["sad", "angry", "surprise", "fear", "happy",
             "disgust", "neutral"])
         self.gaze_areas = set(["up", "down", "left", "right", "center", "offs"]) # 1 for center, 2 for outer rim, 3 for off screen
-        self.weights = ...
+        self.weights = {
+            "happy": 0.3,
+            "neutral": 1,
+            "surprised": 0.3,
+            "fear": 0.1,
+            "angry": 0.2,
+            "sad": 0.3,
+            "disgust": 0.1,
+            "up": 1,
+            "center": 1,
+            "down": 0.2, 
+            "left": 0.2,
+            "right": 0.2
+        }
 
     def grab_images(self):
         # TODO: connect to db and grab all images under self.study_session_id
@@ -165,8 +178,11 @@ class DataAggregator:
                 gaze_area_count[gaze_area] += 1
         
 
-        face_data = {"dominant_emotions": emotion_count, "gaze_area": gaze_area_count, "timestamp": start_timestamp}
-        return face_data
+        face_data = {"dominant_emotions": emotion_count, "gaze_area": gaze_area_count}
+        fitness = self.determine_fitness(face_data)
+        
+        processed_image = {"face_data": face_data, "focus": fitness, "timestamp": start_timestamp}
+        return processed_image
 
     def determine_fitness(self, bucket):
         # calculate weighted average
@@ -177,10 +193,10 @@ class DataAggregator:
         total_emotion_count = sum(emotion_count.values())
         total_gaze_area_count = sum(gaze_area_count.values())
         for emotion, count in emotion_count.items():
-            fitness += self.weights.get(emotion, 0) * count / total_emotion_count
+            fitness += 0.7 * self.weights.get(emotion, 0) * count / total_emotion_count
 
         for gaze, count in gaze_area_count.items():
-            fitness += self.weights.get(gaze, 0) * count / total_gaze_area_count
+            fitness += 0.3 * self.weights.get(gaze, 0) * count / total_gaze_area_count
 
         # penalize if theres "spread out" freq. eg. dont penalize 1 1 1 3 2 but penalize 1 1 2 3 4 5
         max_emotion_count = max(emotion_count.values())
@@ -191,7 +207,7 @@ class DataAggregator:
         if max_gaze_count < 0.4 * total_gaze_area_count:
             fitness -= (total_gaze_area_count - max_gaze_count) * 0.2
 
-        return max(1, fitness)
+        return max(1, fitness*10)
         
 
     
