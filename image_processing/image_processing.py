@@ -16,26 +16,26 @@ class ImageProcessor:
         self.gaze_tracker = GazeTracking()
         print("Image Processor Initialized")
 
-    def gaze_region(self, height, width, left_pupil, right_pupil):
-        """Returns the general region in which the pupil's are gazing at"""
-        inner_x_min = width * 0.2
-        inner_x_max = width * 0.8
-        inner_y_min = height * 0.2
-        inner_y_max = height * 0.8
+    # def gaze_region(self, height, width, left_pupil, right_pupil):
+    #     """Returns the general region in which the pupil's are gazing at"""
+    #     inner_x_min = width * 0.2
+    #     inner_x_max = width * 0.8
+    #     inner_y_min = height * 0.2
+    #     inner_y_max = height * 0.8
 
-        def is_inner_region(pupil):
-            if pupil is None:
-                return False
-            x, y = pupil
-            return inner_x_min <= x <= inner_x_max and inner_y_min <= y <= inner_y_max
+    #     def is_inner_region(pupil):
+    #         if pupil is None:
+    #             return False
+    #         x, y = pupil
+    #         return inner_x_min <= x <= inner_x_max and inner_y_min <= y <= inner_y_max
         
-        if (left_pupil == None and right_pupil == None):
-            return [3, 3]
+    #     if (left_pupil == None and right_pupil == None):
+    #         return [3, 3]
             
-        left_region = 1 if is_inner_region(left_pupil) else 2
-        right_region = 1 if is_inner_region(right_pupil) else 2
+    #     left_region = 1 if is_inner_region(left_pupil) else 2
+    #     right_region = 1 if is_inner_region(right_pupil) else 2
 
-        return [left_region, right_region]
+    #     return [left_region, right_region]
 
     def gaze_processor(self, image=None):
         # decoded_data = base64.b64decode(image)
@@ -123,11 +123,23 @@ class DataAggregator:
         }
 
     def grab_images(self):
+        image_list = []
         # TODO: connect to db and grab all images under self.study_session_id
-        with open("./test_images/jerry_neutral.png", "rb") as image:
-            image_data = image.read()
-            base64_encoded = base64.b64encode(image_data)
-        return [{"base64_encoded": base64_encoded, "timestamp": datetime.datetime(2024, 7, 26, 15, 30, 00)}]
+        for filename in os.listdir("./test_images"):
+            if filename.endswith((".png", ".jpg")):
+                file_path = os.path.join("./test_images", filename)
+                with open(file_path, "rb") as image:
+                    image_data = image.read()
+                    base64_encoded = base64.b64encode(image_data)
+                    seconds = random.randint(0, 17)
+                    image_list.append({"base64_encoded": base64_encoded, "timestamp": datetime.datetime(2024, 7, 26, 15, 30, 00) + datetime.timedelta(seconds=seconds)})
+    
+        return image_list
+
+        # with open("./test_images/jerry_neutral.png", "rb") as image:
+        #     image_data = image.read()
+        #     base64_encoded = base64.b64encode(image_data)
+        # return [{"base64_encoded": base64_encoded, "timestamp": datetime.datetime(2024, 7, 26, 15, 30, 00)}]
 
     def process_single_image(self, image=None):
         image_data = self.image_processor.process_image(image)
@@ -136,6 +148,8 @@ class DataAggregator:
     
     def process_images(self):
         images = self.grab_images()
+        images.sort(key=lambda x: x["timestamp"])
+
         # sort images by timestamp
         all_buckets = []
 
@@ -143,7 +157,7 @@ class DataAggregator:
         bucket_start_time = None
         bucket_data = []
         for image in images:
-            if bucket_start_time and image.timestamp > bucket_start_time + datetime.timedelta(seconds=10):
+            if bucket_start_time and image["timestamp"] > bucket_start_time + datetime.timedelta(seconds=10):
                 aggregated_bucket = self.aggregate_bucket(bucket_data)
                 all_buckets.append(aggregated_bucket)
                 bucket_start_time = None
@@ -200,6 +214,7 @@ class DataAggregator:
             fitness += 0.3 * self.weights.get(gaze, 0) * count / max(1, total_gaze_area_count)
 
         # penalize if theres "spread out" freq. eg. dont penalize 1 1 1 3 2 but penalize 1 1 2 3 4 5
+        fitness *= 10
         max_emotion_count = max(emotion_count.values())
         if max_emotion_count < 0.6 * total_emotion_count:
             fitness -= (total_emotion_count - max_emotion_count) * 0.2
@@ -208,7 +223,7 @@ class DataAggregator:
         if max_gaze_count < 0.6 * total_gaze_area_count:
             fitness -= (total_gaze_area_count - max_gaze_count) * 0.2
 
-        return max(1, fitness*10)
+        return max(1, round(fitness, 2))
         
 
     
