@@ -35,7 +35,7 @@ export class SessionPageComponent {
 
   constructor(protected sessionService: SessionService) {}
 
-  timerInterval: any; // interval for polling image capture
+  timerInterval: any = null; // interval for polling image capture
   POLLING_INTERVAL = 2000; // snapshot poll every 2 seconds
 
   noiseLevels = ['quiet', 'moderate', 'loud'];
@@ -53,6 +53,7 @@ export class SessionPageComponent {
     this.sessionService.isActive.subscribe((isActive) => {
       console.log(isActive);
       if (isActive) {
+        if (this.timerInterval) {return;}
         this.timerInterval = setInterval((_: any) => {
           if (!this.sessionService.isPaused.value) {
             this.triggerSnapshot();
@@ -60,6 +61,7 @@ export class SessionPageComponent {
         }, 2000);
       } else {
         clearInterval(this.timerInterval);
+        this.timerInterval = null;
       }
     });
   }

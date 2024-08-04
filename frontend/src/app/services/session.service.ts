@@ -35,7 +35,7 @@ export class SessionService {
   >(undefined);
   public noiseLevel: BehaviorSubject<string | undefined> = new BehaviorSubject<
     string | undefined
-  >(undefined);
+  >("quiet");
   public id: BehaviorSubject<string | undefined> = new BehaviorSubject<
     any | undefined
   >(undefined);
@@ -91,7 +91,7 @@ export class SessionService {
     this.isActive.next(false);
     this.pauseTimer();
     this.elapsedTime.next(0);
-    this.apiService.post('/end_session/', { session_id: this.id.value });
+    this.apiService.post('/end_session/', { session_id: Number(this.id.value) }).subscribe();
     this.location.next(undefined);
     this.startTime.next(undefined);
   }

@@ -105,7 +105,7 @@ class SaveImageView(views.APIView):
 class ImageDataView(views.APIView):
     def get(self, request, format=None):
         # Extract query parameters
-        session_id = request.data.get('session_id')
+        session_id = request.query_params.get('session_id')
         
         # Validate query parameters
         if not session_id:
