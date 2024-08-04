@@ -1,0 +1,5 @@
+/aeye-env
+/image_processing/my-venv/
+/image_processing/test_images/
+/image_processing/neutral_images/
+**/__pycache__/*

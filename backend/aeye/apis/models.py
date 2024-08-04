@@ -8,21 +8,15 @@ class StudySessions(models.Model):
     start_time = models.DateTimeField(auto_now_add=True)
     end_time = models.DateTimeField(null=True, blank=True)
     noise_level = models.CharField(max_length=255)
-    session_id = models.CharField(max_length=36, unique=True, default=uuid.uuid4)
     
-    def __str__(self):
-        return self.session_id
     
 class Images(models.Model):
-    image_id = models.CharField(max_length=255, unique=True, default=uuid.uuid4, blank=True)
     timestamp = models.DateTimeField(auto_now_add=True)
-    user_id = models.CharField(max_length=255, blank=True) #fix later
-    session_id = models.CharField(max_length=255)
-    binary_encoding = models.BinaryField()
+    session_id = models.ForeignKey(StudySessions, null=True, on_delete=models.SET_NULL)
+    b64_encoding = models.TextField(null=True, blank=True)
 
 class Image_data(models.Model):
     face_data = models.CharField(max_length=255)
-    timestamp = models.DateTimeField(auto_now_add=True)
-    user_id = models.CharField(max_length=255)
-    session_id = models.CharField(max_length=255)
-    focus_level = models.IntegerField()
+    timestamp = models.DateTimeField()
+    session_id = models.ForeignKey(StudySessions, null=True, on_delete=models.SET_NULL)
+    focus_level = models.DecimalField(decimal_places=2, max_digits=3)
