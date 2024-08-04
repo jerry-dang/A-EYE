@@ -201,11 +201,11 @@ class DataAggregator:
 
         # penalize if theres "spread out" freq. eg. dont penalize 1 1 1 3 2 but penalize 1 1 2 3 4 5
         max_emotion_count = max(emotion_count.values())
-        if max_emotion_count < 0.4 * total_emotion_count:
+        if max_emotion_count < 0.6 * total_emotion_count:
             fitness -= (total_emotion_count - max_emotion_count) * 0.2
 
         max_gaze_count = max(gaze_area_count.values())
-        if max_gaze_count < 0.4 * total_gaze_area_count:
+        if max_gaze_count < 0.6 * total_gaze_area_count:
             fitness -= (total_gaze_area_count - max_gaze_count) * 0.2
 
         return max(1, fitness*10)
