@@ -11,6 +11,7 @@ https://docs.djangoproject.com/en/4.1/ref/settings/
 """
 
 from pathlib import Path
+import os
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -98,7 +99,7 @@ DATABASES = {
             'NAME': 'database',
             'ENFORCE_SCHEMA': False,
             'CLIENT': {
-                'host': 'mongodb+srv://ljklim3489:USgYoemJpHS00TV9@a-eye.5l0cqx3.mongodb.net/?retryWrites=true&w=majority&appName=A-EYE'
+                'host': os.environ['MONGODB_KEY']
             }  
         }
 }
